@@ -4,7 +4,7 @@ import emoji from 'markdown-it-emoji';
 import mila from 'markdown-it-link-attributes';
 import virtualize from 'snabbdom-virtualize';
 
-var md = markdown({html: false, linkify: false, typographer: false}).disable('image');
+var md = markdown({html: false, linkify: true, typographer: false}).disable('image');
 md.use(emoji);
 md.use(mila, {target: '_blank', rel: 'noopener', class: 'link blue hover-green'});
 
