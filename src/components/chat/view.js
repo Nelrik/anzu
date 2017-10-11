@@ -4,7 +4,7 @@ import emoji from 'markdown-it-emoji';
 import mila from 'markdown-it-link-attributes';
 import virtualize from 'snabbdom-virtualize';
 
-var md = markdown({html: false, linkify: true, typographer: false}).disable('image');
+var md = markdown({html: false, linkify: false, typographer: false}).disable('image');
 md.use(emoji);
 md.use(mila, {target: '_blank', rel: 'noopener', class: 'link blue hover-green'});
 
@@ -66,7 +66,7 @@ export function view(state$) {
                                 }),
                                 div('.dib.v-mid.w-80.pl3', [
                                     span('.b', state.highlighted.username),
-                                    p('.ma0.mt2', virtualize(`<span>${md.renderInline(state.highlighted.content)}</span>`))
+                                    p('.ma0.mt2', virtualize(findAndReplaceGifs(md.renderInline(state.highlighted.content))))
                                 ])
                             ])
                         ])
@@ -184,7 +184,7 @@ function commandView(type, data, list, index, scrollHook, rolePower) {
                         role.length > 0 ? span('.blue.ml1', role.map(i => span('.icon-star-filled'))) : span(),
                         span('.ml1.fw5.silver', hour(data.timestamp))
                     ]) : span(),
-                    p('.fw4.mt0.mb0.mid-gray', virtualize(`<span>${md.renderInline(data.content)}</span>`))
+                    p('.fw4.mt0.mb0.mid-gray', virtualize(findAndReplaceGifs(md.renderInline(data.content))))
                 ]),
                 div('.dtc.v-mid.actions', [
                     rolePower > 0 && simple == false ? span('.f6.mh1.silver.fr.fa.fa-microphone-slash.hover-red.pointer.id-action', {
@@ -210,6 +210,15 @@ function commandView(type, data, list, index, scrollHook, rolePower) {
             ]);
             break;
     }
+}
+
+function changeLink(text) {
+    return `<img src="${text}" class="w-20" alt="GIF"/>`;
+}
+
+function findAndReplaceGifs(content) {
+    content = content.replace(/^(https?:\/\/)?media\.giphy\.com([\/\w \.-]*)*\/?$/, changeLink);
+    return `<span>${content}</span>`;
 }
 
 function addZero(i) {
