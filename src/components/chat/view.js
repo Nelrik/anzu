@@ -212,12 +212,17 @@ function commandView(type, data, list, index, scrollHook, rolePower) {
     }
 }
 
-function changeLink(text) {
-    return `<img src="${text}" class="w-20" alt="GIF"/>`;
+function changeLink(link) {
+    let htmlObject = document.createElement('div');
+    htmlObject.innerHTML = link;
+    let url = htmlObject.firstElementChild.getAttribute("href");
+    if(!url.search(/^(https?:\/\/)?media\.giphy\.com([\/\w \.-]*)*\/?$/))
+        return `<img src="${url}" class="w-20" alt="GIF"/>`;
+    return link;
 }
 
 function findAndReplaceGifs(content) {
-    content = content.replace(/^(https?:\/\/)?media\.giphy\.com([\/\w \.-]*)*\/?$/, changeLink);
+    content = content.replace(/<a[^>]*>(.*?)<\/a>/, changeLink);
     return `<span>${content}</span>`;
 }
 
