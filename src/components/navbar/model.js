@@ -5,6 +5,7 @@ const DEFAULT_STATE = {
     user: false,
     token: false,
     notifications: [],
+    connectedCount: 0,
     resolving: {
         user: false,
         notifications: false
@@ -129,8 +130,17 @@ export function model(actions, accountModal) {
         token: false
     }));
 
-    const state$ = xs.merge(tokenR$, userR$, logoutR$, modalR$, notificationsR$, openNotificationsR$, incomingNotificationR$)
-        .fold((state, action) => action(state), DEFAULT_STATE);
+    const onlineR$ = actions.online$.map(count => state => ({...state, connectedCount: count}));
+    const state$ = xs.merge(
+        tokenR$, 
+        userR$, 
+        logoutR$, 
+        modalR$, 
+        notificationsR$, 
+        openNotificationsR$, 
+        incomingNotificationR$, 
+        onlineR$
+    ).fold((state, action) => action(state), DEFAULT_STATE);
 
     const ng$ = xs.merge(
         // Links that will be processed by angular's router
@@ -144,12 +154,14 @@ export function model(actions, accountModal) {
     );
 
     const beep$ = actions.userChan$.filter(ev => ev.fire == 'notification' && ev.count > 0);
+    const socket$ = actions.ngLink$.filter(href => href !== '/chat').map(path => (['chat disconnect']));
 
     return {
         state$,
         http$,
         storage$,
         ng$,
-        beep$
+        beep$,
+        socket$
     };
 }

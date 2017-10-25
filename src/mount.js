@@ -15,6 +15,7 @@ export function navbar(element, ngCallback) {
 		HTTP: makeHTTPDriver(),
 		angular: ngDriver(ngCallback),
 		socketIO: makeSocketIODriver(socketIo()),
+		socketIOChat: makeSocketIODriver(socketIo(Anzu.chatIO)),
 		storage: storageDriver,
 		beep: beepDriver
 	});
@@ -31,11 +32,6 @@ export function chat(element) {
 
 function socketIo(server = Anzu.globalIO) {
 	const token = localStorage.getItem('id_token');
-	let params = {forceNew: true};
 
-	if (token !== null && String(token).length > 0) {
-		params['query'] = 'token=' + token;
-	}
-
-	return io(server, params);
+	return io(server, {query: token !== null && String(token).length > 0 ? 'token=' + token : ''});
 }
