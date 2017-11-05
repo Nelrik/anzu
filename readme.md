@@ -2,7 +2,7 @@
 
 ## Official Documentation
 
-## Contributing
+## Contributing.
 
 Thank you for considering contributing to SpartanGeek
 
