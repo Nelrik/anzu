@@ -6,4 +6,4 @@
 
 Thank you for considering contributing to SpartanGeek
 
-### License
+### License.
